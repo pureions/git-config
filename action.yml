@@ -18,6 +18,7 @@ runs:
       name: Determine Git user info from GitHub token
       shell: bash
       run: |
+        RELEASE_PLZ_TOKEN=${{ secrets.RELEASE_PLZ_TOKEN }}
         if [ -z "${RELEASE_PLZ_TOKEN+x}" ]; then
           echo "Error: environment variable GITHUB_TOKEN is undefined"
           exit 1
