@@ -4,6 +4,10 @@ description: "Configure the git user corresponding to the `GITHUB_TOKEN` environ
 branding:
   icon: "zap"
   color: "yellow"
+inputs:
+  token:
+    description: Forgjo API token
+    required: true
 outputs:
   name:
     description: "Git author name"
@@ -19,7 +23,7 @@ runs:
       shell: bash
       run: |
         # The environment variable GITHUB_TOKEN is read by the `gh` cli
-        RESPONSE=$(curl -H "Authorization: token ${{ secrets.RELEASE_PLZ_TOKEN }}" ${FORGEJO_API_URL}/user)
+        RESPONSE=$(curl -H "Authorization: token ${{ inputs.RELEASE_PLZ_TOKEN }}" ${FORGEJO_API_URL}/user)
         
 
         # Set the variable USER_NAME to the value of VIEWER_NAME if VIEWER_NAME is set and not null.
