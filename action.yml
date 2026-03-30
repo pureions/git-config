@@ -18,29 +18,27 @@ runs:
       name: Determine Git user info from GitHub token
       shell: bash
       run: |
-        if [ -z "${GITHUB_TOKEN+x}" ]; then
+        if [ -z "${RELEASE_PLZ_TOKEN+x}" ]; then
           echo "Error: environment variable GITHUB_TOKEN is undefined"
           exit 1
         fi
 
-        if [ -z "$GITHUB_TOKEN" ]; then
+        if [ -z "$RELEASE_PLZ_TOKEN" ]; then
           echo "Error: environment variable GITHUB_TOKEN is empty"
           exit 1
         fi
 
         # The environment variable GITHUB_TOKEN is read by the `gh` cli
-        VIEWER_JSON=$(gh api graphql -f query='query { viewer { name login databaseId }}' --jq '.data.viewer')
-        VIEWER_NAME=$(jq --raw-output '.name | values' <<< "${VIEWER_JSON}")
-        VIEWER_LOGIN=$(jq --raw-output '.login' <<< "${VIEWER_JSON}")
-        VIEWER_DATABASE_ID=$(jq --raw-output '.databaseId' <<< "${VIEWER_JSON}")
+        RESPONSE=$(curl -H "Authorization: token ${RELEASE_PLZ_TOKEN}" ${FORGEJO_API_URL}/user)
+        
 
         # Set the variable USER_NAME to the value of VIEWER_NAME if VIEWER_NAME is set and not null.
         # Otherwise, set USER_NAME to the value of VIEWER_LOGIN.
-        USER_NAME="${VIEWER_NAME:-${VIEWER_LOGIN}}"
-        USER_EMAIL="${VIEWER_DATABASE_ID}+${VIEWER_LOGIN}@users.noreply.github.com"
+        USER_NAME=$(echo "$RESPONSE" | jq -r '.full_name // .login')
+        USER_EMAIL=$(echo "$RESPONSE" | jq -r '.email // empty')
 
-        git config --global user.name "${USER_NAME}"
-        git config --global user.email "${USER_EMAIL}"
+        git config --global user.name "$USER_NAME"
+        git config --global user.email "$USER_EMAIL"
 
         echo "name=${USER_NAME}" >> "${GITHUB_OUTPUT}"
         echo "email=${USER_EMAIL}" >> "${GITHUB_OUTPUT}"
