@@ -18,19 +18,8 @@ runs:
       name: Determine Git user info from GitHub token
       shell: bash
       run: |
-        RELEASE_PLZ_TOKEN=${{ secrets.RELEASE_PLZ_TOKEN }}
-        if [ -z "${RELEASE_PLZ_TOKEN+x}" ]; then
-          echo "Error: environment variable GITHUB_TOKEN is undefined"
-          exit 1
-        fi
-
-        if [ -z "$RELEASE_PLZ_TOKEN" ]; then
-          echo "Error: environment variable GITHUB_TOKEN is empty"
-          exit 1
-        fi
-
         # The environment variable GITHUB_TOKEN is read by the `gh` cli
-        RESPONSE=$(curl -H "Authorization: token ${RELEASE_PLZ_TOKEN}" ${FORGEJO_API_URL}/user)
+        RESPONSE=$(curl -H "Authorization: token ${{ secrets.RELEASE_PLZ_TOKEN }}" ${FORGEJO_API_URL}/user)
         
 
         # Set the variable USER_NAME to the value of VIEWER_NAME if VIEWER_NAME is set and not null.
