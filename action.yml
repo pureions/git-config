@@ -33,6 +33,7 @@ runs:
 
         git config --global user.name "$USER_NAME"
         git config --global user.email "$USER_EMAIL"
+        git config --global user.password "${{ inputs.token }}"
 
         echo "name=${USER_NAME}" >> "${GITHUB_OUTPUT}"
         echo "email=${USER_EMAIL}" >> "${GITHUB_OUTPUT}"
